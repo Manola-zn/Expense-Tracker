@@ -1,0 +1,235 @@
+﻿@model IEnumerable<ExpenseTrackerApp.Models.Category>
+
+
+@{
+    ViewData["PageTitle"] = "Categories";
+    ViewData["PageActionText"] = "+ New Category";
+    ViewData["PageActionFunction"] = "AddCategory(0);";
+}
+
+<html>
+<head>
+    <!--DataTables-->
+    <link class="rtl_switch_css" href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/rowreorder/1.2.5/css/rowReorder.dataTables.min.css">
+    <link rel="stylesheet" href="//cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
+
+    <style>
+        table.dataTable thead > tr > th.sorting_asc, table.dataTable thead > tr > th.sorting_desc, table.dataTable thead > tr > th.sorting, table.dataTable thead > tr > td.sorting_asc, table.dataTable thead > tr > td.sorting_desc, table.dataTable thead > tr > td.sorting {
+            background-color: cornflowerblue;
+            padding-right: 30px;
+            color: white;
+        }
+
+        .table-bordered tbody tr:nth-child(odd) td {
+            background-color: white;
+        }
+
+        .table-bordered tbody tr:nth-child(even) td {
+            background-color: #CEECF5;
+        }
+
+        .table-bordered tbody tr.highlight td {
+            background-color: #F2F5A9;
+        }
+
+        /*Modal*/
+        .modal-content {
+            width: 550px !important;
+            border: 3px solid gray;
+            margin-left: 80px;
+            border-radius: 50px;
+            margin-top: 50px;
+            margin-left: -120px;
+        }
+
+        .modal-header {
+            background-color: #337AB7;
+            padding: 16px 16px;
+            color: #FFF;
+            border-bottom: 2px dashed #337AB7;
+        }
+
+        .right-close {
+            position: absolute;
+            right: 20px; /* Adjust as needed */
+            top: 20px; /* Adjust as needed */
+            color: #000; /* Adjust the color as needed */
+        }
+
+        .fade:not(.show) {
+            opacity: 1;
+            background-color: #5665928f;
+        }
+
+        #example_filter label {
+            display: flex;
+            align-items: center; /* Center vertically */
+        }
+
+        /* Style for the plus icon */
+        #example_filter label .fa-plus {
+             margin-right: 8px; /* Adjust margin as needed */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <table id="example" class="table table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>
+                            Category Name
+                        </th>
+                        <th>
+                            Type
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.TitleWithIcon)
+                            </td>
+                            <td>
+
+                                @if (item.categoryType == "Expense")
+                                {
+
+                                    <span class="badge bg-success">@item.categoryType</span>
+
+                                }
+                                @if (item.categoryType == "Income")
+                                {
+                                    <span class="badge bg-danger">@item.categoryType</span>
+
+                                }
+
+                            </td>
+                            <td>
+                                <button class="btn btn-warning" type="button" id="@item.categoryID" onclick="EditCat(this.id)">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+
+                                <button class="btn btn-danger" type="button" id="@item.categoryID" onclick="DelCat(this.id)">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="addFormModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="title" class="modal-title"><b>Add A New Category</b></h3>
+                    <a href="@Url.Action("Index", "Category")" class="close right-close" data-dismiss="modal" aria-hidden="true">&times;</a>
+                </div>
+                <div class="modal-body" id="addFormModelDiv">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editFormModel" tabindex="-2" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="title" class="modal-title"><b>Update Category</b></h3>
+                    <a href="@Url.Action("Index", "Category")" class="close right-close" data-dismiss="modal">&times;</a>
+                </div>
+                <div class="modal-body" id="editFormModelDiv">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="delFormModel" tabindex="-3" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="title" class="modal-title"><b>Delete Category</b></h3>
+                    <a href="@Url.Action("Index", "Category")" class="close right-close" data-dismiss="modal">&times;</a>
+                </div>
+                <div class="modal-body" id="delFormModelDiv">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--DataTable-->
+    <script src="//code.jquery.com/jquery-1.12.4.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/rowreorder/1.2.5/js/dataTables.rowReorder.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js" type="text/javascript"></script>
+    <script src="//cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js" type="text/javascript"></script>
+
+    <script>
+        var test = jQuery.noConflict();
+
+        test(document).ready(function ($) {
+
+            test('#example').dataTable({
+                searching: true,
+                responsive: true,
+                autoWidth: true,
+                rowReorder: {
+                    selector: 'td:nth-child(2)'
+                },
+                columnDefs: [
+                    { orderable: false, targets: [2] }
+                ]
+            });
+
+            // Create a button and insert it before the search box
+            //var buttonHtml = '<button class="btn btn-primary" onclick="AddCategory(0)"><i class="fa fa-plus"></i><span style="font-weight: bold;">Add New Category</span></button>';
+            //$('#example_filter label').prepend(buttonHtml);
+
+        });
+    </script>
+
+    <script>
+        var AddCategory = function (categoryID) {
+            var url = "/Category/AddOrEdit?categoryID=" + categoryID;
+            if (categoryID > 0)
+                $('#title').html("Add A New Category");
+            $('#addFormModelDiv').load(url, function () {
+                $('#addFormModel').modal("show");
+            });
+        }
+    </script>
+
+    <script>
+        var EditCat = function (categoryID) {
+            var url = "/Category/AddOrEdit/" + categoryID;
+            if (categoryID > 0)
+                $('#title').html("Update Category");
+            $("#editFormModelDiv").load(url, function () {
+                $("#editFormModel").modal("show");
+            });
+        }
+    </script>
+
+    <script>
+        var DelCat = function (categoryID) {
+            var url = "/Category/Delete/" + categoryID;
+            if (categoryID > 0)
+                $('#title').html("Delete Category");
+            $("#delFormModelDiv").load(url, function () {
+                $("#delFormModel").modal("show");
+            });
+        }
+    </script>
+
+</body>
+</html>

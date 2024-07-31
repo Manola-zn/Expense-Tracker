@@ -1,0 +1,30 @@
+﻿<html>
+<head>
+ 
+</head>
+<body>
+    <ol class="breadcrumb">
+        @foreach (var item in Model)
+        {
+            <li class="breadcrumb-item">
+                @if (item.Title == "Transaction")
+                {
+                    <i class="fa fa-home"></i>
+                    <a href="@item.Url">@item.Title</a>
+                }
+                else
+                {
+                    <a href="@item.Url">@item.Title</a>
+                }
+            </li>
+        }
+    </ol>
+    <div>
+        @foreach (var item in Model)
+        {
+            <p>Title: @item.Title, Url: @item.Url</p>
+        }
+    </div>
+</body>
+</html>
+

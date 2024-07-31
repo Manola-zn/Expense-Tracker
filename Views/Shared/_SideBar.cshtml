@@ -1,0 +1,48 @@
+﻿﻿<nav class="open">
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fa fa-bars menu-icon" id="menu-toggle"></i>
+            <span class="logo-name">Expense Tracker</span>
+        </div>
+        <div class="sidebar-content">
+            <ul class="lists">
+                <li class="list">
+                    <a href="/Dashboard" class="nav-link @(Request.Url.AbsolutePath.Contains("/Dashboard") ? "active" : "")">
+                        <i class="fa fa-home icon"></i>
+                        <span class="link">Dashboard</span>
+                    </a>
+                </li>
+                <li class="list">
+                    <a href="/Transaction" class="nav-link @(Request.Url.AbsolutePath.Contains("/Transaction") ? "active" : "")">
+                        <i class="fa fa-bar-chart icon"></i>
+                        <span class="link">Transactions</span>
+                    </a>
+                </li>
+                <li class="list">
+                    <a href="/Category" class="nav-link @(Request.Url.AbsolutePath.Contains("/Category") ? "active" : "")">
+                        <i class="fa fa-folder-open icon"></i>
+                        <span class="link">Categories</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="bottom-cotent">
+                <ul class="lists">
+                     <li class="list">
+                        <a href="#" class="nav-link">
+                            <i class="fa fa-cog icon"></i>
+                            <span class="link">Settings</span>
+                        </a>
+                     </li>
+                     <li class="list">
+                        <a href="#" class="nav-link">
+                            <i class="fa fa-sign-out icon"></i>
+                            <span class="link">Logout</span>
+                        </a>
+                     </li> 
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+

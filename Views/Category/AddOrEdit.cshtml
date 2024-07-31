@@ -1,0 +1,153 @@
+﻿@model ExpenseTrackerApp.Models.Category
+
+@{
+    Layout = null;
+}
+
+<html>
+<head>
+    <script src="~/Scripts/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    @using (Html.BeginForm("AddOrEdit", "Category", FormMethod.Post, new { id = "CreateForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.categoryID)
+
+        <table style="width:100%">
+            <tr>
+                <div class="btn-group" data-toggle="buttons" style="width:100%">
+                    <label class="btn btn-primary @Html.Raw(Model.categoryType == "Expense" ? "active btn-info" : "")" id="ExpenseLabel">
+                        @Html.RadioButton("categoryType", "Expense", Model.categoryType == "Expense", new { htmlAttributes = new { @class = "form-control" }, id = "Expense" })
+                        <b>Expense</b>
+                    </label>
+
+                    <label class="btn btn-primary @Html.Raw(Model.categoryType == "Income" ? "active btn-info" : "")" id="IncomeLabel">
+                        @Html.RadioButton("categoryType", "Income", Model.categoryType == "Income", new { htmlAttributes = new { @class = "form-control" }, id = "Income" })
+                        <b>Income</b>
+                    </label>
+                </div>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(model => model.categoryTitle, "Title")
+                </th>
+                <td>
+                    @Html.EditorFor(model => model.categoryTitle, new { htmlAttributes = new { @class = "form-control", id = "cattitle" } })
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.LabelFor(model => model.categoryIcon, "Icon")
+                </th>
+                <td>
+                    @Html.EditorFor(model => model.categoryIcon, new { htmlAttributes = new { @class = "form-control", id = "icon" } })
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td>
+                    <input type="submit" value="Submit" class="btn btn-primary" onclick="Validate(this, event);" />
+                    <input type="button" value="Cancel" class="btn btn-danger" onclick="location.href='@Url.Action("Index", "Category")'" />
+                </td>
+            </tr>
+        </table>
+    }
+
+    <!--SweetAlert-->
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Function to handle radio button change event
+            $("input[name='categoryType']").change(function () {
+                // Remove active class and reset background color for all labels
+                $(".btn-primary").removeClass("active btn-info").css("background-color", "");
+
+                // Add active class, btn-info class, and set background color for the selected label
+                $(this).closest("label").addClass("active btn-info").css("background-color", "#0A58CA");
+            });
+
+            // Trigger change event on page load to initialize the correct visual state
+            $("input[name='categoryType']:checked").change();
+        });
+    </script>
+
+    <script>
+        function validateData() {
+
+            var type = $("input[name='categoryType']:checked").val();
+            var title = $("#cattitle").val();
+            var icon = $("#icon").val();
+
+            if (type == "" || type == undefined) {
+                swal("Please select type!");
+                return false;
+            } else if (title == "" || title == undefined) {
+                swal("Please enter title!");
+                return false;
+            } else if (icon == "" || icon == undefined) {
+                swal("Please enter icon!");
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
+
+    <script>
+        function Validate(ctl, event)
+        {
+
+            event.preventDefault();
+
+            swal({
+                    title: "Do you want to save it?",
+                    text: "Please check Information before Submiting!",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Yes, save it!",
+                    cancelButtonText: "No, cancel!",
+                    closeOnConfirm: true,
+                    closeOnCancel: false
+                },
+                function(isConfirm)
+                 {
+                    if (isConfirm)
+                    {
+                        if (validateData() == true) {
+                            $("#CreateForm").submit();
+                            swal("Category Details Inserted Successfully");
+
+                        }
+                    } else
+                    {
+                        var url = '@Url.Action("Index", "Category")';
+                        window.location.href = url;
+                        swal("Cancelled", "You have Cancelled Form Submission!", "error");
+                    }
+                });
+        }
+
+        function clearfields() {
+            $('input[type="text"]').val(""); //clears text boxes
+            $('select').val("");
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    @using ExpenseTrackerApp.Helpers
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <!-- Custom fonts for this template -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Custom fonts for this template -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+</head>
+
+@Html.Partial("_SideBar")
+
+<body class="e-bigger">
+        <div class="main-content">
+            <div class="container mt-5">
+                <div class="@(ViewData["isDashboard"] == null?"col-md-10":"col-md-12")">
+                    <main role="main" class="pb-3">
+                        @if (ViewData["isDashboard"] == null)
+                        {
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="d-flex flex-column mb-5">
+                                        <div class="d-flex mb-1">
+                                            <div class="flex-grow-1">
+                                                <h3 class="fw-bold">@ViewData["PageTitle"]</h3>
+                                            </div>
+                                            <div>
+                                                @if (ViewData["PageActionText"] != null)
+                                                {
+                                                    <a class="btn btn-success" onclick="@(ViewData["PageActionFunction"])">
+                                                        @ViewData["PageActionText"]
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="breadcrumb">
+                                            <div class="breadcrumb-item">
+                                                <a href="@Url.Action("Index", "Dashboard")"><i class="fa fa-home"></i></a>
+                                            </div>
+
+                                            @if (Html.IsCurrentAction("Index", "Transaction"))
+                                            {
+                                                <div class="breadcrumb-item">
+                                                    <span>Transaction</span>
+                                                </div>
+                                            }
+
+                                            @if (Html.IsCurrentAction("Index", "Category"))
+                                            {
+                                                <div class="breadcrumb-item">
+                                                    <span>Category</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         }
+                        @RenderBody()
+                    </main>
+                </div>
+            </div>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const menuToggle = document.getElementById('menu-toggle');
+                const sidebar = document.querySelector('.open .sidebar');
+
+                menuToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('collapsed');
+                });
+            });
+        </script>
+
+    </body>
+</html>
